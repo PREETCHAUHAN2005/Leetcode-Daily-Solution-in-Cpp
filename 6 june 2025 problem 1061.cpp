@@ -1,37 +1,41 @@
 class Solution {
 public:
     
-    char dfs(unordered_map<char, vector<char>>& adj, char cur, vector<int>& vis) {
-        vis[cur - 'a'] = 1;
-        char minChar = cur;
-        for (char neighbor : adj[cur]) {
-            if (vis[neighbor - 'a'] == 0) {
-                minChar = min(minChar, dfs(adj, neighbor, vis));
-            }
+    char l(vector<int>& freq) {
+        for (int i = 0; i < 26; i++) {
+            if (freq[i]) return 'a' + i;
         }
-        return minChar;
+        return 'a';
     }
 
-    string smallestEquivalentString(string s1, string s2, string baseStr) {
-        int n = s1.length();
-        unordered_map<char, vector<char>> adj;
+    string robotWithString(string s) {
+        stack<char> st;
+        string t = "";
+        vector<int> freq(26);
 
         
-        for (int i = 0; i < n; ++i) {
-            char u = s1[i];
-            char v = s2[i];
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+        for (char ch : s) {
+            freq[ch - 'a']++;
         }
 
         
-        string result;
-        for (char ch : baseStr) {
-            vector<int> vis(26, 0);
-            char minChar = dfs(adj, ch, vis);
-            result.push_back(minChar);
+        for (char ch : s) {
+            st.push(ch);
+            freq[ch - 'a']--;
+
+           
+            while (!st.empty() && st.top() <= l(freq)) {
+                t += st.top();
+                st.pop();
+            }
         }
 
-        return result;
+        
+        while (!st.empty()) {
+            t += st.top();
+            st.pop();
+        }
+
+        return t;
     }
 };
